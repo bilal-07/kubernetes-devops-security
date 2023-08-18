@@ -22,11 +22,9 @@ pipeline {
 
       stage('Docker Build & Push') {
         steps {
-          withDockerRegistry(url:'', credentialsId: 'docker-hub'){
-            sh 'docker build -t bilalaslam0313/numeric-app:""$GIT_COMMIT"" .'
-            sh 'docker push bilalaslam0313/numeric-app:""$GIT_COMMIT""'
+            sh 'docker build -t docker-registry:5000/java-app .'
           }
-        }
+
       }
     }
 }
