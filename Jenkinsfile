@@ -22,9 +22,20 @@ pipeline {
 
       stage('Docker Build & Push') {
         steps {
-            sh 'docker build -t docker-registry:5000/java-app .'
+          withDockerRegistry(url:'', credentialsId: 'docker-hub'){
+            sh 'docker build -t bilalaslam0313/numeric-app:""$GIT_COMMIT"" .'
+            sh 'docker push bilalaslam0313/numeric-app:""$GIT_COMMIT""'
           }
+        }
+      }
 
+      stage('K8S Deployment - DEV') {
+        steps {
+          withKubeConfig([credentialsId: 'kubeconfig']) {
+            sh sh "sed -i 's#replace#bilalaslam0313/numeric-app:${GIT_COMMIT}#g' k8s_deployment_service.yml"
+              sh 'kubectl apply -f k8s_deployment_service.yml'
+           }
+        }
       }
     }
 }
